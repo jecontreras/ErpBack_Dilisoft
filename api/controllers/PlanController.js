@@ -1,13 +1,13 @@
 /**
- * EmpresaController
+ * PlanController
  *
- * @description :: Server-side logic for managing empresas
+ * @description :: Server-side logic for managing plans
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
 module.exports = {
 	query: function(req, res) {
-			Empresa.find(req.body.params)
+			Plan.find(req.body.params)
 			.exec(
 					function(err, result){
 							if (err) {
@@ -15,5 +15,5 @@ module.exports = {
 							}
 							return res.ok({status: 200, data: result});
 							});
-	},
+	}
 };

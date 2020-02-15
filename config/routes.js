@@ -19,17 +19,17 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': { view: 'pages/homepage' },
-  'POST /contrato/querys': 'ContratoController.querys',
-  'POST /contrato/create': 'ContratoController.create',
-  'POST /facturas/querys': 'FacturasController.querys',
-  'POST /empresas/querys': 'EmpresasController.querys',
-  'POST /user/querys': 'UserController.querys',
+  '/': { view: 'pages/pages' },
+  'POST /facturas/query': 'FacturasController.query',
+  'POST /facturasiventario/query': 'FacturasIventarioController.query',
+  'POST /inventario/query': 'InventarioController.query',
+  'POST /provedores/query': 'ProvedoresController.query',
+  'POST /categoria/query': 'CategoriaController.query',
+  'POST /user/query': 'UserController.query',
   'POST /user/register': 'UserController.register',
   'POST /user/login': 'UserController.login',
-  'POST /rol/querys': 'RolController.querys',
-  'POST /pais/querys': 'PaisController.querys',
-  'POST /archivos/querys': 'ArchivosController.querys',
+  'POST /rol/query': 'RolController.query',
+  'POST /archivos/query': 'ArchivosController.query',
 
 
   /***************************************************************************

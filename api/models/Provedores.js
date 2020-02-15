@@ -1,5 +1,5 @@
 /**
- * EstadoFacturas.js
+ * Provedores.js
  *
  * @description :: A model definition represents a database table/collection.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
@@ -9,22 +9,29 @@ module.exports = {
 
   attributes: {
 
-    factura:{
-      model: 'facturas',
+    nombre:{
+      type: 'string',
       required: true
     },
-    estado:{
+    celular:{
+      type: 'string'
+    },
+    estado: {
       type: 'string',
       enum:[
+        'inactivo',
         'activo',
-        'pendiente',
-        'eliminado'
       ],
       defaultsTo: 'activo'
     },
+    email:{
+      type: 'string'
+    },
+    direccion:{
+      type: 'string'
+    },
     detalle:{
-      type: 'string',
-      required:true
+      type: 'string'
     }
 
   },

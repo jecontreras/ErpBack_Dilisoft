@@ -8,78 +8,51 @@
 module.exports = {
 
   attributes: {
-    idContrato:{
-      model: 'contrato',
-      required:true
-    },
-    numeroFactura:{
-      type:'integer',
-      required:true
-    },
-    facturasAtrasadas:{
-      type:'integer',
-      required:true
-    },
-    fechaGenerada:{
+    codigo:{
       type: 'string',
       required:true
     },
-    fechaGeneradaFormat:{
-      type: 'string',
-      required:true
+    creado:{
+      model: 'user'
     },
-    fechaCorte:{
-      type: 'string',
-      required:true
+    totalFactura:{
+      type: 'integer',
+      required: true
     },
-    fechaMaximaCorte:{
-      type: 'string',
-      required:true
+    descuento:{
+      type: 'integer',
+      defaultsTo: 0
     },
-    fechaPagada:{
+    total:{
+      type: 'integer',
+      defaultsTo: 0
+    },
+    cliente:{
       type: 'string'
     },
-    estadoPago:{
-      collection: 'estadoFacturas',
-      via: 'factura'
+    direccion:{
+      type: 'string'
     },
-    estado:{
+    detalle:{
+      type: 'string'
+    },
+    tipo:{
+      type: 'string',
+      enum: [
+        'factura',
+        'compra'
+      ],
+      required: true
+    },
+    estado: {
       type: 'string',
       enum:[
+        'eliminado',
         'activo',
-        'atrasado',
-        'finalizado',
-        'eliminado'
+        'pagada'
       ],
       defaultsTo: 'activo'
     },
-    valorIva:{
-      type: 'integer',
-      required:true
-    },
-    valorTotal:{
-      type: 'integer',
-      required:true
-    },
-    valorRestante:{
-      type: 'integer'
-    },
-    valorApagar:{
-      type: 'integer',
-      required:true
-    },
-    detalle:{
-      type: 'string',
-      required:true
-    },
-    respuestaServer:{
-      type: 'string',
-      enum:[
-        "enviado",
-        "error"
-      ]
-    }
-
   },
 
 };

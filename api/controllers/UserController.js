@@ -1,12 +1,11 @@
 /**
  * UserController
  *
- * @description :: Server-side actions for handling incoming requests.
- * @help        :: See https://sailsjs.com/docs/concepts/actions
+ * @description :: Server-side logic for managing users
+ * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-
-const Procedures = Object();
-const Passwords = require('machinepack-passwords');
+var Passwords = require('machinepack-passwords');
+let Procedures = Object();
 
 Procedures.register = async(req, res)=>{
     let
@@ -35,7 +34,6 @@ Procedures.register = async(req, res)=>{
   if(!user) return res.badRequest(err);
   return res.ok({status: 200, data: user});
 }
-
 Procedures.encryptedPassword = (password) =>{
     return new Promise(resolve=>{
         Passwords.encryptPassword({
@@ -52,45 +50,44 @@ Procedures.encryptedPassword = (password) =>{
     })
 
 }
-Procedures.login = async(req, res)=>{
-    let param = req.allParams();
-    let resulado = Object();
-    // Buscando el usuario
-    resulado = await User.findOne({where:{email: param.email}}).populate("rol").populate("empresa");
-    if(!resulado) return res.send({'success': false,'data': 'Usuario no encontrado','data': resulado});
-    // chequiando el password
-    let password = await Procedures.chequearPassword(param, resulado);
-    if(!password) return res.send({'success': false,'data': 'Contraseña incorrecta'});
-    resulado.password = '';
-    return res.send({
-    'success': true,
-    'data': 'Peticion realizada',
-    'data': resulado
-    });
+
+Procedures.query = async function(req, res) {
+    User.find(req.body.params)
+    .exec(
+        function(err, result){
+            if (err) {
+                return res.badRequest(err);
+            }
+            return res.ok({status: 200, data: result});
+            });
 }
-Procedures.chequearPassword = async(param, user)=>{
-    return new Promise(resolve=>{
+
+Procedures.login = async function(req, res){
+    User.findOne({username: req.param('username')}).exec(function(err, user){
+        if(err) return res.send({'success': false,'message': 'Peticion fallida','data': err});
+        if(!user) return res.send({'success': false,'message': 'Usuario no encontrado','data': user});
         Passwords.checkPassword({
-            passwordAttempt: param.password,
+            passwordAttempt: req.param('password'),
             encryptedPassword: user.password,
             }).exec({
             error: function (err) {
-                resolve({status: 400, data: "Eror del servidor"});
+                return res.send({'success': false,'message': 'Eror del servidor','data': err});
             },
             incorrect: function () {
-                resolve({status: 400, data: "Contraseña incorrecta"});
+                return res.send({'success': false,'message': 'Contraseña incorrecta'});
             },
             success: function () {
-                resolve({status: 200, data: "Peticion realizada"});
+                user.password = '';
+                sails.log('User '+ user.id +' has logged in.');
+                return res.send({
+                'success': true,
+                'message': 'Peticion realizada',
+                'data': user
+                });
+
             },
             });
-    })
-}
-Procedures.querys = async(req, res)=>{
-    let params = req.allParams();
-    let resultado = Object();
-    resultado = await QuerysServices(User,params);
-    return res.ok( { status: 200, ...resultado } );
+        })
 }
 
 module.exports = Procedures;

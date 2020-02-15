@@ -1,13 +1,13 @@
 /**
- * EmpresaController
+ * AsistenciaController
  *
- * @description :: Server-side logic for managing empresas
+ * @description :: Server-side logic for managing asistencias
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
 module.exports = {
 	query: function(req, res) {
-			Empresa.find(req.body.params)
+			Asistencia.find(req.body.params)
 			.exec(
 					function(err, result){
 							if (err) {

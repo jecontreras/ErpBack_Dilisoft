@@ -1,5 +1,5 @@
 /**
- * Pais.js
+ * Categoria.js
  *
  * @description :: A model definition represents a database table/collection.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
@@ -8,25 +8,22 @@
 module.exports = {
 
   attributes: {
-    pais:{
+    categoria:{
       type: 'string'
     },
-    nombreCorto:{
+    slug:{
       type: 'string'
     },
-    moneda:{
-      type: 'string'
-    },
-    iva:{
-      type: 'integer'
-    },
-    indicativo:{
-      type: 'string'
+    categoriaDe:{
+      type: 'string',
+      enum:[
+        'producto'
+      ],
+      defaultsTo: 'producto'
     },
     detalle:{
       type: 'string'
     }
-
   },
 
 };

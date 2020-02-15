@@ -1,0 +1,286 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div
+      fxLayout="row"
+    >
+      <mat-form-field
+          fxFlex
+          class="example-full-width"
+          *ngIf="disabled"
+      >
+          <input
+              matInput
+              placeholder="User Name"
+              disabled = false
+              [(ngModel)]="text"
+          >
+      </mat-form-field>
+      <button
+        mat-mini-fab color="primary"
+        *ngIf="disabled"
+      >
+        <i class="fas fa-search fa-1x"></i>
+      </button>
+      <div
+        fxFlex
+        *ngIf="!disabled"
+      >
+        <div
+          fxLayout="row"
+          fxLayoutAlign="center center"
+        >
+          <span>Crear Asistencia </span>
+        </div>
+      </div>
+      <button
+        *ngIf="disabled"
+        aria-label="button"
+        (click)="create($event)"
+        mat-mini-fab color="primary"
+      >
+        <i class="fas fa-plus-circle fa-1x"></i>
+      </button>
+      <button
+        *ngIf="!disabled"
+        aria-label="button"
+        (click)="create($event)"
+        mat-mini-fab color="primary"
+      >
+        <i class="fas fa-window-close fa-1x"></i>
+      </button>
+    </div>
+    <table
+      class="table"
+      *ngIf="disabled"
+    >
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Usuario</th>
+          <th scope="col">Costo</th>
+          <th scope="col">Descripcion</th>
+          <th scope="col">Create</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let item of list"
+        >
+          <th scope="row">{{ item.Usuario }}</th>
+          <td>{{ item.costo }}</td>
+          <td>{{ item.descripcion }}</td>
+          <td>{{ item.createdAt }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div
+      *ngIf="!disabled"
+    >
+      <div class="main-content">
+        <div class="container-fluid">
+          <div
+            fxLayout="column"
+          >
+            <div
+              fxLayout="row"
+            >
+              <mat-form-field
+                fxFlex
+                class="example-full-width"
+              >
+                <input
+                  type="text"
+                  placeholder="Documento"
+                  aria-label="Number"
+                  ([ngModel])="searchtextDoc"
+                  (keyup)="consulta()"
+                  matInput
+                  [formControl]="myControl"
+                  [matAutocomplete]="auto"
+                >
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                <mat-option
+                  *ngFor="let item of filteredOptions | async"
+                  [value]="item.documento"
+                  (blur)="relleno(item)"
+                >
+                  <span>{{ item.documento }}</span> |
+                  <small>{{ item.name }}</small>
+                </mat-option>
+              </mat-autocomplete>
+              </mat-form-field>
+              <mat-form-field
+                  fxFlex
+                  class="example-full-width"
+              >
+                  <input
+                      matInput
+                      placeholder="Nombre"
+                      disabled = false
+                      [(ngModel)]="data.usuario.name"
+                  >
+              </mat-form-field>
+            </div>
+            <div
+              fxLayout="row"
+            >
+              <mat-form-field
+                fxFlex
+              >
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  [(ngModel)]="data.fecha"
+                  placeholder="Fecha"
+                >
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                >
+                </mat-datepicker-toggle>
+                <mat-datepicker
+                  #picker
+                >
+                </mat-datepicker>
+              </mat-form-field>
+              <mat-form-field
+                  fxFlex
+                  class="example-full-width"
+              >
+                  <input
+                      matInput
+                      type="number"
+                      placeholder="Valor"
+                      disabled = false
+                      [(ngModel)]="data.valor"
+                  >
+              </mat-form-field>
+            </div>
+            <div
+              fxLayout="row"
+            >
+              <mat-form-field
+                fxFlex
+                class="example-full-width"
+              >
+                <textarea
+                  matInput
+                  placeholder="Descripcion"
+                  [(ngModel)]="data.descripcion"
+                >
+                </textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+import { Component, OnInit } from '@angular/core';
+import { FacturaService } from '../../services/factura.service';
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+import * as _ from 'lodash';
+
+@Component({
+  selector: 'app-facturar',
+  templateUrl: './facturar.component.html',
+  styleUrls: ['./facturar.component.scss']
+})
+export class FacturarComponent implements OnInit {
+
+  myControl = new FormControl();
+  list: any = [];
+  disabled: any = true;
+  options: string[] = [];
+  pusiono: any = false;
+  data: any = {
+    usuario: {},
+    fecha: new Date(),
+    valor: 2000,
+    descripcion: 'Buen Dia'
+  };
+  searchtextDoc: any = '';
+  searchtextNom: any = '';
+  filteredOptions: Observable<string[]>;
+
+  constructor(
+    private _factura: FacturaService
+  ) {
+      this.disabled = true;
+  }
+
+  ngOnInit() {
+    this.consulta(false);
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value))
+    );
+    const
+      query:any = {
+
+      }
+    ;
+    this._factura.getfactura(query)
+    .subscribe(
+      (res: any) =>{
+        // console.log(res);
+        this.list = res.data;
+      }
+    )
+    ;
+  }
+  create(ev){
+    // console.log(ev);
+    this.disabled = !this.disabled;
+  }
+  consulta(opt: any){
+    const
+      query: any ={}
+    ;
+    this.pusiono = opt;
+    if(!opt){
+      if(this.searchtextDoc){
+        query.documento = this.searchtextDoc;
+      }
+    }else{
+      if(this.searchtextNom){
+        query.slug = this.searchtextNom;
+      }
+    }
+    this._factura.getusuario(query)
+    .subscribe(
+      (res: any)=>{
+        // console.log(res);
+        this.options = res.data;
+      }
+    )
+    ;
+  }
+  private _filter(value: string): string[] {
+    value = _.kebabCase(value);
+    // console.log(value, this.options);
+    if(this.pusiono){
+      return this.options.filter((option: any) =>
+        // {console.log(option)},
+        option.slug.toLowerCase().indexOf(value) === 0
+      );
+    }else{
+      return this.options.filter((option:any) =>
+        // {console.log(option)},
+        option.documento.toLowerCase().indexOf(value) === 0
+      );
+    }
+  }
+
+  relleno(item: any){
+    if(item){
+      this.data.usuario = item;
+    }
+  }
+
+}

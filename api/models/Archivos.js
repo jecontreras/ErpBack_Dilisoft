@@ -8,8 +8,11 @@
 module.exports = {
 
   attributes: {
-    contrato:{
-      model: 'contrato'
+    inventario:{
+      model: 'inventario'
+    },
+    factura: {
+      model: 'facturas'
     },
     name: {
       type: 'string',
@@ -30,4 +33,3 @@ module.exports = {
   },
 
 };
-

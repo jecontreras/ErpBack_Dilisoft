@@ -1,17 +1,20 @@
 /**
  * RolController
  *
- * @description :: Server-side actions for handling incoming requests.
- * @help        :: See https://sailsjs.com/docs/concepts/actions
+ * @description :: Server-side logic for managing rols
+ * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-let Procedures = Object();
+module.exports = {
+	query: function(req, res) {
+        Rol.find(req.body.params)
+        .exec(
+            function(err, result){
+                if (err) {
+                    return res.badRequest(err);
+                }
+                return res.ok({status: 200, data: result});
+                });
+    }
+};
 
-Procedures.querys = async(req, res)=>{
-    let params = req.allParams();
-    let resultado = Object();
-    resultado = await QuerysServices(Rol,params);
-    return res.ok( { status: 200, ...resultado } );
-}
-
-module.exports = Procedures;
